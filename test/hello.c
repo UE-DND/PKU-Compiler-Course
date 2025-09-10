@@ -1,5 +1,4 @@
 int main() {
-    // AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-    int a = 1;
-    return a;
+  // 忽略我的存在
+  return 0;
 }

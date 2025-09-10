@@ -6,20 +6,24 @@
 ## Quick start
 
 ```bash
-docker pull maxxing/compiler-dev  # pulling image
+# pull image
+docker pull maxxing/compiler-dev
 ```
 
 ```bash
-docker run -it --rm -v "Z:\Github Repos\PKU-Compiler-Course:/workspace" maxxing/compiler-dev bash  # mount this host directory (e.g.) into the container
-
-cd workspace
+# mount
+docker run -it --rm -v "/home/uednd/Code/PKU-Compiler-Course:/workspace" maxxing/compiler-dev bash && cd /workspace
 ```
 
 ```bash
 # config and build
-cmake -DCMAKE_BUILD_TYPE=Debug -B build
-cmake --build build
+cmake -DCMAKE_BUILD_TYPE=Debug -B build && cmake --build build
+```
+
+```bash
+# test
+./compiler -koopa ../test/hello.c -o hello.koopa
 ```
 
 > **Note:**  
-> If you are using Linux and the repository is on a mounted external hard drive, Docker may not have the necessary permissions when running the mount command above, and however, it won't tell you about it. fuck this problem wasted 2hs of my life.
+> If you are using Linux and the repository is on a mounted external hard drive, Docker may not have the necessary permissions when running the mount command above, and however, it won't tell you about it. This shit wasted 2hs of my life.
