@@ -2,80 +2,68 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "ast.h"
 
 int yylex();
-void yyerror(char **ast, const char *s);
+void yyerror(BaseAST **ast, const char *s);
 %}
 
-%parse-param { char **ast }
+%parse-param { BaseAST **ast }
 
 %union {
   char *str_val;
   int int_val;
+  BaseAST *ast_val;
 }
 
 %token INT RETURN
 %token <str_val> IDENT
 %token <int_val> INT_CONST
 
-%type <str_val> FuncDef FuncType Block Stmt Number
+%type <ast_val> FuncDef FuncType Block Stmt
+%type <int_val> Number
 
 %%
 
 CompUnit
   : FuncDef {
-    *ast = $1;
+    *ast = create_comp_unit_ast($1);
   }
   ;
 
 FuncDef
   : FuncType IDENT '(' ')' Block {
-    size_t len = strlen($1) + 1 + strlen($2) + 2 + 1 + strlen($5) + 1;
-    char *result = (char *)malloc(len);
-    sprintf(result, "%s %s() %s", $1, $2, $5);
-    $$ = result;
-    free($1);
-    free($2);
-    free($5);
+    $$ = create_func_def_ast($1, $2, $5);
   }
   ;
 
 FuncType
   : INT {
-    $$ = strdup("int");
+    $$ = create_func_type_ast();
   }
   ;
 
 Block
   : '{' Stmt '}' {
-    size_t len = strlen($2) + 4 + 1; // for "{ ", " }", and '\0'
-    char *result = (char *)malloc(len);
-    sprintf(result, "{ %s }", $2);
-    $$ = result;
-    free($2);
+    $$ = create_block_ast($2);
   }
   ;
 
 Stmt
   : RETURN Number ';' {
-    size_t len = strlen("return ") + strlen($2) + 1 + 1; // for ";" and '\0'
-    char *result = (char *)malloc(len);
-    sprintf(result, "return %s;", $2);
-    $$ = result;
-    free($2);
+    BaseAST *number_ast = create_number_ast($2);
+    $$ = create_stmt_ast(number_ast);
   }
   ;
 
 Number
   : INT_CONST {
-    char buffer[50];
-    sprintf(buffer, "%d", $1);
-    $$ = strdup(buffer);
+    $$ = $1;
   }
   ;
 
 %%
 
-void yyerror(char **ast, const char *s) {
+void yyerror(BaseAST **ast, const char *s) {
   fprintf(stderr, "error: %s\n", s);
 }

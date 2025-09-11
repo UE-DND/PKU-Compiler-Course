@@ -12,7 +12,8 @@ docker pull maxxing/compiler-dev
 
 ```bash
 # mount
-docker run -it --rm -v "/home/uednd/Code/PKU-Compiler-Course:/workspace" maxxing/compiler-dev bash && cd /workspace
+docker run -it --rm -v "/home/uednd/Code/PKU-Compiler-Course:/workspace" maxxing/compiler-dev bash
+cd /workspace
 ```
 
 ```bash
@@ -22,7 +23,7 @@ cmake -DCMAKE_BUILD_TYPE=Debug -B build && cmake --build build
 
 ```bash
 # test
-./compiler -koopa ../test/hello.c -o hello.koopa
+./build/compiler test/hello.c
 ```
 
 > **Note:**  
