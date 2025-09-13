@@ -22,8 +22,13 @@ cmake -DCMAKE_BUILD_TYPE=Debug -B build && cmake --build build
 ```
 
 ```bash
-# test
-./build/compiler test/hello.c
+# test - generate Koopa IR
+./build/compiler -koopa test/hello.c -o hello.koopa
+```
+
+```bash
+# test - show AST structure
+./build/compiler -ast test/hello.c -o hello.ast
 ```
 
 > **Note:**  

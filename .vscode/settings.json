@@ -1,3 +1,19 @@
 {
-    "files.autoSave": "onFocusChange"
+    "files.autoSave": "onFocusChange",
+    "files.associations": {
+        "atomic": "c",
+        "chrono": "c",
+        "cmath": "c",
+        "complex": "c",
+        "unordered_map": "c",
+        "random": "c",
+        "format": "c",
+        "limits": "c",
+        "optional": "c",
+        "ranges": "c",
+        "functional": "c",
+        "tuple": "c",
+        "type_traits": "c",
+        "variant": "c"
+    }
 }

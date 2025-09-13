@@ -5,12 +5,12 @@
 #include <string.h>
 
 typedef enum {
-    AST_COMP_UNIT,
-    AST_FUNC_DEF,
-    AST_FUNC_TYPE,
-    AST_BLOCK,
-    AST_STMT,
-    AST_NUMBER
+    AST_COMP_UNIT,  // 编译单元（整个程序的根节点）
+    AST_FUNC_DEF,   // 函数定义
+    AST_FUNC_TYPE,  // 函数类型
+    AST_BLOCK,      // 代码块
+    AST_STMT,       // 语句
+    AST_NUMBER      // 数字字面量
 } ASTNodeType;
 
 /**
