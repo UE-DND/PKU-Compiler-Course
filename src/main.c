@@ -19,12 +19,25 @@ int main(int argc, const char *argv[]) {
 
   BaseAST *ast = NULL;
   int ret = yyparse(&ast);                        // yyparse解析成功返回0
-  assert(!ret);
+  if (ret) {
+    fprintf(stderr, "Parse error\n");
+    return 1;
+  }
 
   // 根据模式输出不同内容
   if (strcmp(mode, "-koopa") == 0) {
-    // 使用独立的IR生成器输出Koopa IR
-    generate_koopa_ir(ast);
+    // 使用独立的IR生成器输出Koopa IR到指定文件
+    FILE *output_file = fopen(output, "w");
+    if (!output_file) {
+      fprintf(stderr, "Failed to open output file: %s\n", output);
+      destroy_ast(ast);
+      return 1;
+    }
+    
+    CodeGenerator gen;
+    codegen_init(&gen, output_file);
+    codegen_program(&gen, ast);
+    fclose(output_file);
   } else {
     // 默认输出AST结构（调试用）
     dump_ast(ast);
