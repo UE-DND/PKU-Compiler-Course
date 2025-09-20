@@ -58,4 +58,4 @@ set(SOURCES ${C_SOURCES} ${CXX_SOURCES} ${CC_SOURCES}
 # executable
 add_executable(compiler ${SOURCES})
 set_target_properties(compiler PROPERTIES C_STANDARD 11 CXX_STANDARD 17)
-target_link_libraries(compiler koopa pthread dl)
+target_link_libraries(compiler koopa pthread dl m)
