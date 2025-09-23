@@ -1,18 +1,15 @@
 #include "codegen.h"
 #include <assert.h>
 
-void codegen_init(CodeGenerator *gen, FILE *output) {
+void codegen_program(CodeGenerator *gen, FILE *output, const BaseAST *ast) {
     assert(gen);
     assert(output);
-    
-    gen->output = output;
-    gen->indent_level = 0;
-}
-
-void codegen_program(CodeGenerator *gen, const BaseAST *ast) {
-    assert(gen);
     assert(ast);
     assert(ast->type == AST_COMP_UNIT);
+    
+    // 初始化代码生成器
+    gen->output = output;
+    gen->indent_level = 0;
     
     codegen_comp_unit(gen, (const CompUnitAST *)ast);
 }
@@ -84,6 +81,5 @@ void codegen_number(CodeGenerator *gen, const NumberAST *ast) {
 
 void generate_koopa_ir(const BaseAST *ast) {
     CodeGenerator gen;
-    codegen_init(&gen, stdout);
-    codegen_program(&gen, ast);
+    codegen_program(&gen, stdout, ast);
 }

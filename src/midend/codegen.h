@@ -9,18 +9,12 @@ typedef struct {
 } CodeGenerator;
 
 /**
- * 初始化代码生成器
- * @param gen 代码生成器实例
- * @param output 输出流
- */
-void codegen_init(CodeGenerator *gen, FILE *output);
-
-/**
  * 生成完整Koopa IR
  * @param gen 代码生成器实例
+ * @param output 输出流
  * @param ast 程序的根AST节点
  */
-void codegen_program(CodeGenerator *gen, const BaseAST *ast);
+void codegen_program(CodeGenerator *gen, FILE *output, const BaseAST *ast);
 
 // ========================================
 // 各AST节点类型的代码生成函数

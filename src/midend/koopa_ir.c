@@ -3,7 +3,7 @@
 #include <string.h>
 
 // 从字符串解析 Koopa IR 代码并构建原始程序表示
-int koopa_parse_ir_from_string(const char *ir_text, koopa_raw_program_builder_t *out_builder, koopa_raw_program_t *out_raw) {
+int parse_ir_from_string(const char *ir_text, koopa_raw_program_builder_t *out_builder, koopa_raw_program_t *out_raw) {
   // 检查参数有效性
   if (!ir_text || !out_builder || !out_raw) return -1;
 
@@ -27,7 +27,7 @@ int koopa_parse_ir_from_string(const char *ir_text, koopa_raw_program_builder_t 
 }
 
 // 将程序中的所有函数名称输出到标准错误流
-void koopa_dump_functions_to_stderr(koopa_raw_program_t raw) {
+void dump_functions_to_stderr(koopa_raw_program_t raw) {
 
   const koopa_raw_slice_t funcs = raw.funcs;                          // 获取程序中的函数列表
   
