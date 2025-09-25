@@ -10,7 +10,8 @@ typedef enum {
     AST_FUNC_TYPE,  // 函数类型
     AST_BLOCK,      // 代码块
     AST_STMT,       // 语句
-    AST_NUMBER      // 数字字面量
+    AST_NUMBER,     // 数字字面量
+    AST_UNARY       // 一元表达式
 } ASTNodeType;
 
 /**
@@ -71,12 +72,12 @@ typedef struct {
 
 /**
  * 语句AST节点
- * Stmt ::= "return" Number ";";
- * 表示return语句，包含要返回的数值表达式
+ * Stmt ::= "return" Exp ";";
+ * 表示return语句，包含要返回的表达式
  */
 typedef struct {
     BaseAST base;
-    BaseAST *number;  // 要返回的数值
+    BaseAST *expr;  // 要返回的表达式
 } StmtAST;
 
 /**
@@ -88,6 +89,17 @@ typedef struct {
     BaseAST base;
     int value;  // 整数值
 } NumberAST;
+
+/**
+ * 一元表达式AST节点
+ * UnaryExp ::= PrimaryExp | UnaryOp UnaryExp;
+ * 这里只在构造时使用：当是 PrimaryExp 时直接复用子节点；当是 UnaryOp 时使用该节点。
+ */
+typedef struct {
+    BaseAST base;
+    char op;           // '+', '-', '!'
+    BaseAST *operand;  // 子表达式
+} UnaryAST;
 
 // ========================================
 // AST节点创建函数
@@ -127,7 +139,7 @@ BaseAST* create_block_ast(BaseAST *stmt);
  * @param number 要返回的数值节点
  * @return 新创建的StmtAST节点
  */
-BaseAST* create_stmt_ast(BaseAST *number);
+BaseAST* create_stmt_ast(BaseAST *expr);
 
 /**
  * 创建数字字面量AST节点
@@ -135,6 +147,14 @@ BaseAST* create_stmt_ast(BaseAST *number);
  * @return 新创建的NumberAST节点
  */
 BaseAST* create_number_ast(int value);
+
+/**
+ * 创建一元表达式AST节点
+ * @param op 一元运算符：'+', '-', '!'
+ * @param operand 子表达式
+ * @return 新创建的UnaryAST节点
+ */
+BaseAST* create_unary_ast(char op, BaseAST *operand);
 
 // ========================================
 // AST操作函数

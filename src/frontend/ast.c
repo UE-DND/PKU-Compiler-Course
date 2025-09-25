@@ -30,13 +30,20 @@ static void block_dump(const BaseAST *self) {
 static void stmt_dump(const BaseAST *self) {
     const StmtAST *stmt = (const StmtAST *)self;
     printf("StmtAST { ");
-    stmt->number->dump(stmt->number);
+    stmt->expr->dump(stmt->expr);
     printf(" }");
 }
 
 static void number_dump(const BaseAST *self) {
     const NumberAST *number = (const NumberAST *)self;
     printf("%d", number->value);
+}
+
+static void unary_dump(const BaseAST *self) {
+    const UnaryAST *unary = (const UnaryAST *)self;
+    printf("UnaryAST { %c, ", unary->op);
+    unary->operand->dump(unary->operand);
+    printf(" }");
 }
 
 static void comp_unit_destroy(BaseAST *self) {
@@ -75,14 +82,20 @@ static void block_destroy(BaseAST *self) {
 
 static void stmt_destroy(BaseAST *self) {
     StmtAST *stmt = (StmtAST *)self;
-    if (stmt->number) {
-        stmt->number->destroy(stmt->number);
+    if (stmt->expr) {
+        stmt->expr->destroy(stmt->expr);
     }
     free(stmt);
 }
 
 static void number_destroy(BaseAST *self) {
     free(self);
+}
+
+static void unary_destroy(BaseAST *self) {
+    UnaryAST *unary = (UnaryAST *)self;
+    if (unary->operand) unary->operand->destroy(unary->operand);
+    free(unary);
 }
 
 BaseAST* create_comp_unit_ast(BaseAST *func_def) {
@@ -127,7 +140,7 @@ BaseAST* create_stmt_ast(BaseAST *number) {
     stmt->base.type = AST_STMT;
     stmt->base.dump = stmt_dump;
     stmt->base.destroy = stmt_destroy;
-    stmt->number = number;
+    stmt->expr = number;
     return (BaseAST *)stmt;
 }
 
@@ -151,4 +164,14 @@ void dump_ast(const BaseAST *ast) {
     if (ast) {
         ast->dump(ast);
     }
+}
+
+BaseAST* create_unary_ast(char op, BaseAST *operand) {
+    UnaryAST *u = malloc(sizeof(UnaryAST));
+    u->base.type = AST_UNARY;
+    u->base.dump = unary_dump;
+    u->base.destroy = unary_destroy;
+    u->op = op;
+    u->operand = operand;
+    return (BaseAST *)u;
 }

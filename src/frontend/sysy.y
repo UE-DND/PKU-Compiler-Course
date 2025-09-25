@@ -20,8 +20,7 @@ void yyerror(BaseAST **ast, const char *s);
 %token <str_val> IDENT
 %token <int_val> INT_CONST
 
-%type <ast_val> FuncDef FuncType Block Stmt
-%type <int_val> Number
+%type <ast_val> FuncDef FuncType Block Stmt Exp PrimaryExp UnaryExp Number
 
 %%
 
@@ -50,16 +49,29 @@ Block
   ;
 
 Stmt
-  : RETURN Number ';' {
-    BaseAST *number_ast = create_number_ast($2);
-    $$ = create_stmt_ast(number_ast);
+  : RETURN Exp ';' {
+    $$ = create_stmt_ast($2);
   }
   ;
 
 Number
-  : INT_CONST {
-    $$ = $1;
-  }
+  : INT_CONST { $$ = create_number_ast($1); }
+  ;
+
+Exp
+  : UnaryExp { $$ = $1; }
+  ;
+
+PrimaryExp
+  : '(' Exp ')' { $$ = $2; }
+  | Number { $$ = $1; }
+  ;
+
+UnaryExp
+  : PrimaryExp { $$ = $1; }
+  | '+' UnaryExp { $$ = $2; }
+  | '-' UnaryExp { $$ = create_unary_ast('-', $2); }
+  | '!' UnaryExp { $$ = create_unary_ast('!', $2); }
   ;
 
 %%

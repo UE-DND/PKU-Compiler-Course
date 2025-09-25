@@ -55,12 +55,8 @@ void codegen_block(CodeGenerator *gen, const BlockAST *ast);
  */
 void codegen_stmt(CodeGenerator *gen, const StmtAST *ast);
 
-/**
- * 生成数字字面量IR
- * @param gen 代码生成器实例
- * @param ast NumberAST节点
- */
-void codegen_number(CodeGenerator *gen, const NumberAST *ast);
+// 计算表达式常量值
+int eval_const_expr(const BaseAST *expr, int *out);
 
 /**
  * 简化的代码生成接口，直接输出到stdout

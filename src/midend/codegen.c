@@ -60,26 +60,43 @@ void codegen_block(CodeGenerator *gen, const BlockAST *ast) {
 void codegen_stmt(CodeGenerator *gen, const StmtAST *ast) {
     assert(gen);
     assert(ast);
-    assert(ast->number);
-    assert(ast->number->type == AST_NUMBER);
+    assert(ast->expr);
 
     for (int i = 0; i < gen->indent_level; i++) {
         fprintf(gen->output, "  ");
     }
     
-    fprintf(gen->output, "ret ");
-    codegen_number(gen, (const NumberAST *)ast->number);
-    fprintf(gen->output, "\n");
-}
-
-void codegen_number(CodeGenerator *gen, const NumberAST *ast) {
-    assert(gen);
-    assert(ast);
-    
-    fprintf(gen->output, "%d", ast->value);
+    int val = 0;
+    int ok = eval_const_expr(ast->expr, &val);
+    assert(ok && "Only constant expressions supported in lv3.1");
+    fprintf(gen->output, "ret %d\n", val);
 }
 
 void generate_koopa_ir(const BaseAST *ast) {
     CodeGenerator gen;
     codegen_program(&gen, stdout, ast);
+}
+
+int eval_const_expr(const BaseAST *expr, int *out) {
+    if (!expr || !out) return 0;
+    switch (expr->type) {
+        case AST_NUMBER: {
+            const NumberAST *n = (const NumberAST *)expr;
+            *out = n->value;
+            return 1;
+        }
+        case AST_UNARY: {
+            const UnaryAST *u = (const UnaryAST *)expr;
+            int v = 0;
+            if (!eval_const_expr(u->operand, &v)) return 0;
+            switch (u->op) {
+                case '+': *out = +v; return 1;
+                case '-': *out = -v; return 1;
+                case '!': *out = (v == 0); return 1; // C 语义：真为1，假为0
+                default: return 0;
+            }
+        }
+        default:
+            return 0;
+    }
 }
