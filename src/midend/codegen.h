@@ -6,6 +6,7 @@
 typedef struct {
     FILE *output;           // 输出流
     int indent_level;       // 当前缩进
+    int temp_counter;       // 临时变量计数器
 } CodeGenerator;
 
 /**
@@ -54,6 +55,14 @@ void codegen_block(CodeGenerator *gen, const BlockAST *ast);
  * @param ast StmtAST节点
  */
 void codegen_stmt(CodeGenerator *gen, const StmtAST *ast);
+
+/**
+ * 生成表达式IR并返回结果的临时变量名
+ * @param gen 代码生成器实例
+ * @param expr 表达式AST节点
+ * @return 存储计算结果的临时变量名
+ */
+char* codegen_expr(CodeGenerator *gen, const BaseAST *expr);
 
 // 计算表达式常量值
 int eval_const_expr(const BaseAST *expr, int *out);

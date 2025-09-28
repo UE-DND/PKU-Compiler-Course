@@ -46,6 +46,15 @@ static void unary_dump(const BaseAST *self) {
     printf(" }");
 }
 
+static void binary_dump(const BaseAST *self) {
+    const BinaryAST *binary = (const BinaryAST *)self;
+    printf("BinaryAST { ");
+    binary->left->dump(binary->left);
+    printf(" %c ", binary->op);
+    binary->right->dump(binary->right);
+    printf(" }");
+}
+
 static void comp_unit_destroy(BaseAST *self) {
     CompUnitAST *comp_unit = (CompUnitAST *)self;
     if (comp_unit->func_def) {
@@ -96,6 +105,13 @@ static void unary_destroy(BaseAST *self) {
     UnaryAST *unary = (UnaryAST *)self;
     if (unary->operand) unary->operand->destroy(unary->operand);
     free(unary);
+}
+
+static void binary_destroy(BaseAST *self) {
+    BinaryAST *binary = (BinaryAST *)self;
+    if (binary->left) binary->left->destroy(binary->left);
+    if (binary->right) binary->right->destroy(binary->right);
+    free(binary);
 }
 
 BaseAST* create_comp_unit_ast(BaseAST *func_def) {
@@ -174,4 +190,15 @@ BaseAST* create_unary_ast(char op, BaseAST *operand) {
     u->op = op;
     u->operand = operand;
     return (BaseAST *)u;
+}
+
+BaseAST* create_binary_ast(char op, BaseAST *left, BaseAST *right) {
+    BinaryAST *b = malloc(sizeof(BinaryAST));
+    b->base.type = AST_BINARY;
+    b->base.dump = binary_dump;
+    b->base.destroy = binary_destroy;
+    b->op = op;
+    b->left = left;
+    b->right = right;
+    return (BaseAST *)b;
 }

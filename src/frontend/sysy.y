@@ -17,10 +17,11 @@ void yyerror(BaseAST **ast, const char *s);
 }
 
 %token INT RETURN
+%token LE GE EQ NE AND OR
 %token <str_val> IDENT
 %token <int_val> INT_CONST
 
-%type <ast_val> FuncDef FuncType Block Stmt Exp PrimaryExp UnaryExp Number
+%type <ast_val> FuncDef FuncType Block Stmt Exp PrimaryExp UnaryExp MulExp AddExp RelExp EqExp LAndExp LOrExp Number
 
 %%
 
@@ -59,7 +60,7 @@ Number
   ;
 
 Exp
-  : UnaryExp { $$ = $1; }
+  : LOrExp { $$ = $1; }
   ;
 
 PrimaryExp
@@ -72,6 +73,43 @@ UnaryExp
   | '+' UnaryExp { $$ = $2; }
   | '-' UnaryExp { $$ = create_unary_ast('-', $2); }
   | '!' UnaryExp { $$ = create_unary_ast('!', $2); }
+  ;
+
+MulExp
+  : UnaryExp { $$ = $1; }
+  | MulExp '*' UnaryExp { $$ = create_binary_ast('*', $1, $3); }
+  | MulExp '/' UnaryExp { $$ = create_binary_ast('/', $1, $3); }
+  | MulExp '%' UnaryExp { $$ = create_binary_ast('%', $1, $3); }
+  ;
+
+AddExp
+  : MulExp { $$ = $1; }
+  | AddExp '+' MulExp { $$ = create_binary_ast('+', $1, $3); }
+  | AddExp '-' MulExp { $$ = create_binary_ast('-', $1, $3); }
+  ;
+
+RelExp
+  : AddExp { $$ = $1; }
+  | RelExp '<' AddExp { $$ = create_binary_ast('<', $1, $3); }
+  | RelExp '>' AddExp { $$ = create_binary_ast('>', $1, $3); }
+  | RelExp LE AddExp { $$ = create_binary_ast('l', $1, $3); }
+  | RelExp GE AddExp { $$ = create_binary_ast('g', $1, $3); }
+  ;
+
+EqExp
+  : RelExp { $$ = $1; }
+  | EqExp EQ RelExp { $$ = create_binary_ast('e', $1, $3); }
+  | EqExp NE RelExp { $$ = create_binary_ast('n', $1, $3); }
+  ;
+
+LAndExp
+  : EqExp { $$ = $1; }
+  | LAndExp AND EqExp { $$ = create_binary_ast('&', $1, $3); }
+  ;
+
+LOrExp
+  : LAndExp { $$ = $1; }
+  | LOrExp OR LAndExp { $$ = create_binary_ast('|', $1, $3); }
   ;
 
 %%

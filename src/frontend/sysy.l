@@ -24,6 +24,13 @@ Hexadecimal   0[xX][0-9a-fA-F]+
 "int"           { return INT; }
 "return"        { return RETURN; }
 
+"<="            { return LE; }
+">="            { return GE; }
+"=="            { return EQ; }
+"!="            { return NE; }
+"&&"            { return AND; }
+"||"            { return OR; }
+
 {Identifier}    { yylval.str_val = strdup(yytext); return IDENT; }
 {Decimal}       { yylval.int_val = strtol(yytext, NULL, 0); return INT_CONST; }
 {Octal}         { yylval.int_val = strtol(yytext, NULL, 0); return INT_CONST; }
