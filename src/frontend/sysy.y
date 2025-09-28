@@ -20,7 +20,7 @@ void yyerror(BaseAST **ast, const char *s);
 %token <str_val> IDENT
 %token <int_val> INT_CONST
 
-%type <ast_val> FuncDef FuncType Block Stmt Exp PrimaryExp UnaryExp Number
+%type <ast_val> FuncDef FuncType Block Stmt Exp PrimaryExp UnaryExp MulExp AddExp Number
 
 %%
 
@@ -59,7 +59,7 @@ Number
   ;
 
 Exp
-  : UnaryExp { $$ = $1; }
+  : AddExp { $$ = $1; }
   ;
 
 PrimaryExp
@@ -72,6 +72,19 @@ UnaryExp
   | '+' UnaryExp { $$ = $2; }
   | '-' UnaryExp { $$ = create_unary_ast('-', $2); }
   | '!' UnaryExp { $$ = create_unary_ast('!', $2); }
+  ;
+
+MulExp
+  : UnaryExp { $$ = $1; }
+  | MulExp '*' UnaryExp { $$ = create_binary_ast('*', $1, $3); }
+  | MulExp '/' UnaryExp { $$ = create_binary_ast('/', $1, $3); }
+  | MulExp '%' UnaryExp { $$ = create_binary_ast('%', $1, $3); }
+  ;
+
+AddExp
+  : MulExp { $$ = $1; }
+  | AddExp '+' MulExp { $$ = create_binary_ast('+', $1, $3); }
+  | AddExp '-' MulExp { $$ = create_binary_ast('-', $1, $3); }
   ;
 
 %%

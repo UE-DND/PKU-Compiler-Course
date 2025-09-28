@@ -11,7 +11,8 @@ typedef enum {
     AST_BLOCK,      // 代码块
     AST_STMT,       // 语句
     AST_NUMBER,     // 数字字面量
-    AST_UNARY       // 一元表达式
+    AST_UNARY,      // 一元表达式
+    AST_BINARY      // 二元表达式
 } ASTNodeType;
 
 /**
@@ -101,6 +102,19 @@ typedef struct {
     BaseAST *operand;  // 子表达式
 } UnaryAST;
 
+/**
+ * 二元表达式AST节点
+ * MulExp ::= UnaryExp | MulExp ("*" | "/" | "%") UnaryExp;
+ * AddExp ::= MulExp | AddExp ("+" | "-") MulExp;
+ * 表示二元运算表达式，包含左右操作数和运算符
+ */
+typedef struct {
+    BaseAST base;
+    char op;           // '*', '/', '%', '+', '-'
+    BaseAST *left;     // 左操作数
+    BaseAST *right;    // 右操作数
+} BinaryAST;
+
 // ========================================
 // AST节点创建函数
 // ========================================
@@ -155,6 +169,15 @@ BaseAST* create_number_ast(int value);
  * @return 新创建的UnaryAST节点
  */
 BaseAST* create_unary_ast(char op, BaseAST *operand);
+
+/**
+ * 创建二元表达式AST节点
+ * @param op 二元运算符：'*', '/', '%', '+', '-'
+ * @param left 左操作数
+ * @param right 右操作数
+ * @return 新创建的BinaryAST节点
+ */
+BaseAST* create_binary_ast(char op, BaseAST *left, BaseAST *right);
 
 // ========================================
 // AST操作函数
